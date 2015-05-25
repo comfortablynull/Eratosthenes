@@ -1,12 +1,9 @@
 extern crate piston;
 extern crate graphics;
-extern crate glutin_window;
 extern crate opengl_graphics;
 
-use piston::window::WindowSettings;
 use piston::event::*;
-use glutin_window::GlutinWindow as Window;
-use opengl_graphics::{ GlGraphics, OpenGL };
+use self::opengl_graphics::{ GlGraphics, OpenGL };
 use sieve;
 
 const WIDTH:usize = 1920;
@@ -16,7 +13,7 @@ const PROGRESS:usize = 10;
 const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
 
 pub struct App{
-	generations: Vec<sieve::generation>,
+	generations: Vec<sieve::Generation>,
 	current:usize,
 	current_gen:usize,
 	gl: GlGraphics,
@@ -27,7 +24,6 @@ impl App{
 	pub fn new()->App{
 		let opengl = OpenGL::_3_2;
 		let max = (WIDTH/SIZE) * (HEIGHT/SIZE);
-		let floor = (max as f64).sqrt() as usize;
 		let mut sieve_algo = sieve::Sieve::new(max);
 		sieve_algo.run();
 		App{

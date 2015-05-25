@@ -6,7 +6,7 @@ extern crate opengl_graphics;
 use piston::window::WindowSettings;
 use piston::event::*;
 use glutin_window::GlutinWindow as Window;
-use opengl_graphics::{ GlGraphics, OpenGL };
+use opengl_graphics::OpenGL;
 mod algo_render;
 mod sieve;
 
@@ -25,8 +25,8 @@ fn main() {
         if let Some(r) = e.render_args() {
             app.render(&r);
         }
-			if let Some(u) = e.update_args(){
-				app.update();
-			}
+		if let Some(u) = e.update_args(){
+			app.update();
+		}
     }
 }

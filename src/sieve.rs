@@ -1,24 +1,23 @@
 extern crate rand;
-use self::rand::Rng;
 use self::rand::distributions::{Range, IndependentSample};
-pub struct generation{
+pub struct Generation{
 	pub color:[f32;4],
 	pub numbers:Vec<usize>
 }
 pub struct Sieve{
-	pub generations:Vec<generation>,
+	pub generations:Vec<Generation>,
 	max:usize,
 	possible_primes:Vec<bool>
 }
-impl generation{
-	fn new()->generation{
+impl Generation{
+	fn new()->Generation{
 		let empty:Vec<usize>=  Vec::new();
 		let mut rng = rand::thread_rng();
 		let range = Range::new(0.0, 1.0);
 		let r:f32 = range.ind_sample(&mut rng);
 		let g:f32 = 0.5;
 		let b:f32 = range.ind_sample(&mut rng);
-		generation{
+		Generation{
 			color: [r,g,b,1.0], 
 			numbers: empty
 		}
@@ -29,7 +28,7 @@ impl generation{
 }
 impl Sieve{
 	pub fn new(max:usize)->Sieve{
-		let empty:Vec<generation> = Vec::new();
+		let empty:Vec<Generation> = Vec::new();
 		Sieve{
 			max:max,
 			generations:empty,
@@ -39,17 +38,17 @@ impl Sieve{
 	pub fn run(&mut self){
 		let floor = (self.max as f32).sqrt() as usize;
 		for i in 2..floor{
-			if(self.possible_primes[i]){
+			if self.possible_primes[i]{
 				let idx = i;
 				let gen = self.make_gen(idx);
 				self.generations.push(gen);
 			}
 		}
 	}
-	pub fn make_gen(&mut self,idx:usize)->generation{
-		let mut gen = generation::new();
+	pub fn make_gen(&mut self,idx:usize)->Generation{
+		let mut gen = Generation::new();
 		let mut count = 0;
-		if(idx == 2){
+		if idx == 2{
 			gen.add(1);
 		}
 		loop{
