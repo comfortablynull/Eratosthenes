@@ -1,7 +1,8 @@
 [package]
 name = "eratosthenes-pistion"
 version = "0.1.0"
-authors = ["David Caiazzo <david.caiazzo@gmail.com>"]
+authors = ["David Caiazzo <dc@comfortablynull.com>"]
+
 [dependencies]
 rand = "0.3"
 [dependencies.piston]
