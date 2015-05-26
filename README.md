@@ -7,4 +7,4 @@ A program I wrote in Rust to get the hang of the language. It uses the piston li
 - Figure out how to stop screen rendering without the continue_rendering flag
 - Write some tests
 
-[Sample output](http://imgur.com/hfuQiZX)
+[Sample output](http://i.imgur.com/hfuQiZX.gifv)
