@@ -7,8 +7,13 @@ use piston::window::WindowSettings;
 use piston::event::*;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::OpenGL;
+
 mod algo_render;
 mod sieve;
+
+const WIDTH:usize = 1920;
+const HEIGHT:usize = 1000;
+const SIZE:usize = 10;
 
 fn main() {
     let opengl = OpenGL::_3_2;
@@ -16,11 +21,14 @@ fn main() {
         opengl,
         WindowSettings::new(
             "Eratosthenes",
-            [1920, 1000]
+            [WIDTH as u32, HEIGHT as u32]
         )
         .exit_on_esc(true)
     );
-    let mut app = algo_render::App::new();
+    let max = (WIDTH/SIZE) * (HEIGHT/SIZE);
+	let mut sieve_algo = sieve::Sieve::new(max);
+	sieve_algo.run(); 
+    let mut app = algo_render::App::new(&sieve_algo.generations,WIDTH,HEIGHT,SIZE);
     for e in window.events() {
         if let Some(r) = e.render_args() {
             app.render(&r);

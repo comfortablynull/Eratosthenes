@@ -6,44 +6,46 @@ use piston::event::*;
 use self::opengl_graphics::{ GlGraphics, OpenGL };
 use sieve;
 
-const WIDTH:usize = 1920;
-const HEIGHT:usize = 1000;
-const SIZE:usize = 10;
 const PROGRESS:usize = 10;
 const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
 
-pub struct App{
-	generations: Vec<sieve::Generation>,
+pub struct App<'gs>{
+	generations: &'gs Vec<sieve::Generation>,
 	current:usize,
 	current_gen:usize,
 	gl: GlGraphics,
 	slices:usize,
-	keep_rendering:bool
+	keep_rendering:bool,
+	width:usize,
+	height:usize,
+	size:usize
 }
 
-impl App{
-	pub fn new()->App{
+impl <'gs>App<'gs>{
+	pub fn new(generations:&'gs Vec<sieve::Generation>,width:usize,height:usize,size:usize)->App<'gs>{
 		let opengl = OpenGL::_3_2;
-		let max = (WIDTH/SIZE) * (HEIGHT/SIZE);
-		let mut sieve_algo = sieve::Sieve::new(max);
-		sieve_algo.run();
 		App{
 			gl: GlGraphics::new(opengl),
 			current:0,
 			current_gen:0,
-			generations: sieve_algo.generations,
-			slices: WIDTH/SIZE as usize,
-			keep_rendering:true
+			generations:generations,
+			slices: width/size as usize,
+			keep_rendering:true,
+			width:width,
+			height:height,
+			size:size
 		}
 	}
 	pub fn render(&mut self,args: &RenderArgs){
 		if self.keep_rendering{
 			use graphics::*;
-			let square = rectangle::square(0.0, 0.0, SIZE as f64);
+			let square = rectangle::square(0.0, 0.0, self.size as f64);
 			let x_slices = &self.slices;
-			let generations = &self.generations;
+			let generations = self.generations;
 			let current_gen = &self.current_gen;
 			let current = &self.current;
+			let width = self.width;
+			let size = self.size;
 			 self.gl.draw(args.viewport(),|c, gl| {
 				 clear(GREEN, gl);
 				 let mut k:usize = 0;
@@ -55,8 +57,8 @@ impl App{
 						 if ic == *current && k == *current_gen{
 							 break;
 						 }
-						 let x = if (i % x_slices) == 0 { WIDTH - SIZE } else { ((i % x_slices) * SIZE)-SIZE};
-						 let y = if i > x_slices { ((i / x_slices) - if i%x_slices == 0 { 1 } else { 0 } )* SIZE }else { 0 };
+						 let x = if (i % x_slices) == 0 { width - size } else { ((i % x_slices) * size)-size};
+						 let y = if i > x_slices { ((i / x_slices) - if i%x_slices == 0 { 1 } else { 0 } )* size }else { 0 };
 						 rectangle(color, square,c.transform.trans(x as f64,y as f64),gl);		
 						 ic += 1;		 
 					 }
@@ -66,9 +68,9 @@ impl App{
 					 k += 1;
 				 }
 				 for i in 0..x_slices + 1{
-					 let x = i as f64 * SIZE as f64;
-					 rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0,1.0,WIDTH as f64],c.transform.trans(x,0.0),gl);
-					 rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0,WIDTH as f64,1.0],c.transform.trans(0.0,x),gl);
+					 let x = i as f64 * size as f64;
+					 rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0,1.0,width as f64],c.transform.trans(x,0.0),gl);
+					 rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0,width as f64,1.0],c.transform.trans(0.0,x),gl);
 				}
 						
 			});
@@ -78,9 +80,9 @@ impl App{
 		let gen_size = self.generations.len() - 1;
 		let len = self.generations[self.current_gen].numbers.len();
 		let size = if len>0{ len-1 }else{0};
-		let progress = if len < PROGRESS { 1 } else { PROGRESS }; 
+		
 		if self.current < size{
-			self.current += progress;
+			self.current += if len < PROGRESS { 1 } else { PROGRESS }; ;
 			if self.current > size{
 				self.current = size;
 			}
