@@ -70,7 +70,7 @@ impl Sieve{
 			if j > self.max { break; }
 			if self.possible_primes[j]{
 				self.possible_primes[j] = false;
-				gen.add(j as usize);
+				gen.add(j);
 			}
 			count += 1;
 		}

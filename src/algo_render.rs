@@ -7,7 +7,7 @@ use self::opengl_graphics::{ GlGraphics, OpenGL };
 use graphics::*;
 use sieve;
 
-const PROGRESS:usize = 5;
+const PROGRESS:usize = 20;
 const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
 
 pub struct App<'s>{
@@ -76,8 +76,16 @@ impl <'s>App<'s>{
 		self.gl.draw(args.viewport(),|c, gl| {
 			for n in *start..*stop{
 				let i = gen.numbers[n];
-				let x = if (i % x_slices) == 0 { *width - *size } else { ((i % *x_slices) * *size)-*size} as f64;
-				let y = if i > *x_slices { ((i / *x_slices) - if i%*x_slices == 0 { 1 } else { 0 } )* *size }else { 0 } as f64;
+				let x = if (i % x_slices) == 0 {
+							*width - *size
+						} else {
+							((i % *x_slices) * *size)-*size
+						} as f64;
+				let y = if i > *x_slices {
+							((i / *x_slices) - if i%*x_slices == 0 { 1 } else { 0 } )* *size
+						}else {
+							0
+						} as f64;
 				rectangle(gen.color, square,c.transform.trans(x,y),gl);
 			}
 		});
@@ -85,23 +93,28 @@ impl <'s>App<'s>{
 	pub fn update(&mut self){
 		let size = self.algo.generation.numbers.len();
 		self.start = self.stop;
-		if self.stop < size{
-			self.update_stop();
-		}
-		else{
+		if self.stop >= size{
 			if self.algo.make_next_gen(){
 				self.stop = 0;
-				self.update_stop();
 				self.start = 0;
 			}
 			else{
 				self.keep_rendering = false;
 			}
 		}
+		self.update_stop();
 	}
 	pub fn update_stop(&mut self){
 		let size = self.algo.generation.numbers.len();
-		self.stop += if size < PROGRESS { 1 } else { PROGRESS };
+		//self.stop += if size < PROGRESS { 1 } else { PROGRESS };
+		let mut progress = PROGRESS;
+		loop{
+			if size > progress{
+				break;
+			}
+			progress -= 1;
+		}
+		self.stop += progress;
 		if self.stop > size{
 			self.stop = size;
 		}
