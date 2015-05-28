@@ -2,12 +2,14 @@ extern crate rand;
 use self::rand::distributions::{Range, IndependentSample};
 pub struct Generation{
 	pub color:[f32;4],
-	pub numbers:Vec<usize>
+	pub numbers:Vec<usize>,
 }
 pub struct Sieve{
-	pub generations:Vec<Generation>,
+	pub generation:Generation,
 	max:usize,
-	possible_primes:Vec<bool>
+	possible_primes:Vec<bool>,
+	floor:usize,
+	current:usize
 }
 impl Generation{
 	fn new()->Generation{
@@ -18,7 +20,7 @@ impl Generation{
 		let g:f32 = 0.5;
 		let b:f32 = range.ind_sample(&mut rng);
 		Generation{
-			color: [r,g,b,1.0], 
+			color: [r,g,b,1.0],
 			numbers: empty
 		}
 	}
@@ -28,24 +30,36 @@ impl Generation{
 }
 impl Sieve{
 	pub fn new(max:usize)->Sieve{
-		let empty:Vec<Generation> = Vec::new();
+		let empty:Generation = Generation::new();
+		let mut possible_primes = vec![true;max+1];
+		possible_primes[0] = false;
+		possible_primes[1] = false;
 		Sieve{
 			max:max,
-			generations:empty,
-			possible_primes:vec![true;max+1]
+			generation:empty,
+			possible_primes:possible_primes,
+			floor:(max as f32).sqrt() as usize,
+			current: 1
 		}
 	}
-	pub fn run(&mut self){
-		let floor = (self.max as f32).sqrt() as usize;
-		for i in 2..floor{
-			if self.possible_primes[i]{
-				let idx = i;
-				let gen = self.make_gen(idx);
-				self.generations.push(gen);
+/*	pub fn has_another_generation(&self)->bool{
+		return self.current < self.floor;
+	}*/
+	pub fn make_next_gen(&mut self)->bool{
+		loop{
+			if self.current >= self.floor{
+				return false
+			}
+			self.current += 1;
+			if self.possible_primes[self.current]{
+				break;
 			}
 		}
+		let current = self.current;
+		self.generation = self.make_gen(current);
+		return true;
 	}
-	pub fn make_gen(&mut self,idx:usize)->Generation{
+	fn make_gen(&mut self,idx:usize)->Generation{
 		let mut gen = Generation::new();
 		let mut count = 0;
 		if idx == 2{
