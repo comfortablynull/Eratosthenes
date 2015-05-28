@@ -18,13 +18,12 @@ pub struct App<'s>{
 	slices:usize,
 	keep_rendering:bool,
 	width:usize,
-	height:usize,
 	size:usize,
 	first_run:bool
 }
 
 impl <'s>App<'s>{
-	pub fn new(algo:&'s mut sieve::Sieve,width:usize,height:usize,size:usize)->App<'s>{
+	pub fn new(algo:&'s mut sieve::Sieve,width:usize,size:usize)->App<'s>{
 		let opengl = OpenGL::_3_2;
 		algo.make_next_gen();
 		App{
@@ -35,7 +34,6 @@ impl <'s>App<'s>{
 			slices: width/size as usize,
 			keep_rendering:true,
 			width:width,
-			height:height,
 			size:size,
 			first_run:true
 		}

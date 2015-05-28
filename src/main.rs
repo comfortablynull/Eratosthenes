@@ -27,7 +27,7 @@ fn main() {
     );
     let max = (WIDTH/SIZE) * (HEIGHT/SIZE);
 	let mut sieve_algo = sieve::Sieve::new(max);
-    let mut app = algo_render::App::new(&mut sieve_algo,WIDTH,HEIGHT,SIZE);
+    let mut app = algo_render::App::new(&mut sieve_algo,WIDTH,SIZE);
     for e in window.events() {
         if let Some(r) = e.render_args() {
             app.render(&r);
