@@ -7,7 +7,7 @@ use self::opengl_graphics::{ GlGraphics, OpenGL };
 use graphics::*;
 use sieve;
 
-const PROGRESS:usize = 15;
+const PROGRESS:usize = 5;
 const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
 
 pub struct App<'s>{
@@ -57,9 +57,10 @@ impl <'s>App<'s>{
 		let size = &self.size;
 		self.gl.draw(args.viewport(),|c, gl| {
 			for i in 0..x_slices + 1{
-				let x = i as f64 * *size as f64;
-				rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0,1.0, *width as f64],c.transform.trans(x,0.0),gl);
-				rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0, *width as f64,1.0],c.transform.trans(0.0,x),gl);
+				let xy = i as f64 * *size as f64;
+				let wh = *width as f64;
+				rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0,1.0, wh],c.transform.trans(xy,0.0),gl);
+				rectangle([0.0, 0.0, 0.0, 1.0], [0.0,0.0, wh,1.0],c.transform.trans(0.0,xy),gl);
 			}
 		});
 
@@ -75,9 +76,9 @@ impl <'s>App<'s>{
 		self.gl.draw(args.viewport(),|c, gl| {
 			for n in *start..*stop{
 				let i = gen.numbers[n];
-				let x = if (i % x_slices) == 0 { *width - *size } else { ((i % *x_slices) * *size)-*size};
-				let y = if i > *x_slices { ((i / *x_slices) - if i%*x_slices == 0 { 1 } else { 0 } )* *size }else { 0 };
-				rectangle(gen.color, square,c.transform.trans(x as f64,y as f64),gl);
+				let x = if (i % x_slices) == 0 { *width - *size } else { ((i % *x_slices) * *size)-*size} as f64;
+				let y = if i > *x_slices { ((i / *x_slices) - if i%*x_slices == 0 { 1 } else { 0 } )* *size }else { 0 } as f64;
+				rectangle(gen.color, square,c.transform.trans(x,y),gl);
 			}
 		});
 	}
