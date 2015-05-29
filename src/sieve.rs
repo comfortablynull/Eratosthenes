@@ -42,9 +42,6 @@ impl Sieve{
 			current: 1
 		}
 	}
-/*	pub fn has_another_generation(&self)->bool{
-		return self.current < self.floor;
-	}*/
 	pub fn make_next_gen(&mut self)->bool{
 		loop{
 			if self.current >= self.floor{
